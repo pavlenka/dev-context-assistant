@@ -9,11 +9,14 @@ la anterior (commit + resumen).
 - [x] Scaffold frontend (Vite + React + TS) · Node fijado en `frontend/.nvmrc` (22.23.1)
 - [x] `.env.example` y `core/settings.py` (validación de variables con error claro)
 
-## Fase 1 — Ingestión e indexación
-- [ ] Parser con tree-sitter (Python, JS/TS) + fallback por líneas
-- [ ] Chunking con metadatos (path, líneas, símbolo, lenguaje)
-- [ ] Embeddings (Voyage por defecto) + persistencia en ChromaDB
-- [ ] Endpoint `POST /ingest` + tests
+## Fase 1 — Ingestión e indexación ✅
+- [x] Parser con tree-sitter (Python, JS/TS) + fallback por líneas · gramáticas de
+  `tree-sitter-language-pack` con el API estándar de `tree_sitter` (offline, sin descargas)
+- [x] Chunking con metadatos (path, líneas, símbolo, lenguaje) · `ingestion/chunker.py`
+- [x] Embeddings (Voyage por defecto, OpenAI alternativa) tras interfaz `Embedder` +
+  persistencia en ChromaDB tras interfaz `VectorStore`
+- [x] Endpoint `POST /ingest` (ruta de carpeta/fichero; multipart → Fase 5) + tests offline
+  (28 tests verde, `FakeEmbedder` determinista; ruff + mypy limpios)
 
 ## Fase 2 — Retrieval / RAG
 - [ ] Búsqueda semántica top-k + ensamblado de contexto con presupuesto de tokens

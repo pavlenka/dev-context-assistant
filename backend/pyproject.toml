@@ -5,9 +5,13 @@ description = "Backend del agente RAG Dev Context Assistant (FastAPI + LangGraph
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "chromadb>=1.5.9",
     "fastapi>=0.138.1",
+    "openai>=2.44.0",
     "pydantic-settings>=2.14.2",
+    "tree-sitter-language-pack>=1.10.9",
     "uvicorn[standard]>=0.49.0",
+    "voyageai>=0.4.1",
 ]
 
 [dependency-groups]
@@ -18,6 +22,13 @@ dev = [
     "pytest-asyncio>=1.4.0",
     "ruff>=0.15.20",
 ]
+
+[tool.uv]
+# onnxruntime es dependencia transitiva de chromadb (su embedding function por defecto,
+# que NO usamos: aportamos nuestros propios embeddings de Voyage/OpenAI). Las versiones
+# nuevas solo traen wheel arm64 para macOS; 1.23.2 es la última con wheel Intel (x86_64)
+# y tiene manylinux para Linux/Docker. Solo necesita poder importarse.
+override-dependencies = ["onnxruntime==1.23.2"]
 
 [tool.ruff]
 line-length = 100
