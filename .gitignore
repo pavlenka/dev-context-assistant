@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Entorno (nunca commitear claves)
+.env
+
+# Vector store local (ChromaDB)
+.chroma/
+
+# Node / frontend
+node_modules/
+dist/
+*.local
+
+# Claude Code (ajustes locales de máquina; las skills sí se commitean)
+.claude/settings.local.json
+
+# Sistema / editor
+.DS_Store
