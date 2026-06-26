@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     chroma_persist_dir: str = "./.chroma"
     chroma_collection: str = "dev_context"
 
+    # Ficheros subidos desde el frontend (se conservan para poder leer fragmentos).
+    uploads_dir: str = "./.uploads"
+
     # Retrieval / RAG
     retrieval_top_k: int = 8
     context_token_budget: int = 4000

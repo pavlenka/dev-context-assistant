@@ -43,10 +43,15 @@ la anterior (commit + resumen).
 - [x] Tests de integración de endpoints (`test_chat_endpoint.py` con agente guionizado);
   47 tests verde, ruff + mypy limpios
 
-## Fase 5 — Frontend React/TS
-- [ ] Drag & drop de ficheros → llamada a `/ingest`
-- [ ] Chat con streaming de tokens
-- [ ] Panel de citas (clic en cita → muestra el fragmento)
+## Fase 5 — Frontend React/TS ✅
+- [x] Drag & drop de carpetas/ficheros → `POST /ingest/upload` (multipart) ·
+  `components/FileDrop.tsx` con recorrido de carpetas y filtro por extensión
+- [x] Chat con streaming de tokens (`components/Chat.tsx` + `lib/api.ts` parseando SSE
+  sobre fetch); memoria por `session_id`
+- [x] Panel de citas (`components/Citations.tsx`): clic en cita → `GET /source` muestra el
+  fragmento exacto · backend: `/ingest/upload`, `/source`, `rag/source.py` (DRY con la tool)
+- Backend: 49 tests verde, ruff + mypy limpios. Frontend: `npm run build` (tsc) + oxlint OK;
+  render verificado con Preview.
 
 ## Fase 6 — Polish y entrega
 - [ ] `Dockerfile` del backend + instrucciones de arranque

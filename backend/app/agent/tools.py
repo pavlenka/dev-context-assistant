@@ -7,12 +7,12 @@ devuelve `{"error": ...}` (skill `agent-tools`).
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, cast
 
 from langchain_core.tools import BaseTool, tool
 
 from app.rag.retriever import Retriever
+from app.rag.source import read_indexed_lines
 from app.rag.vector_store import VectorStore
 
 
@@ -68,26 +68,6 @@ def make_tools(retriever: Retriever, store: VectorStore) -> list[BaseTool]:
         """Devuelve las líneas exactas [start, end] (1-indexed, inclusive) de un fichero
         indexado, para citar con precisión. Devuelve {path, start, end, content}, o
         {"error": ...} si la ruta no está indexada o no se puede leer."""
-        try:
-            metadatas = store.get_by_path(path)
-        except Exception as exc:
-            return {"error": f"Fallo al resolver la ruta: {exc}"}
-        abs_path = next((m.get("abs_path") for m in metadatas if m.get("abs_path")), None)
-        if not abs_path:
-            return {"error": f"La ruta no está indexada: {path}"}
-        try:
-            lines = Path(str(abs_path)).read_text(encoding="utf-8").split("\n")
-        except OSError as exc:
-            return {"error": f"No se pudo leer {path}: {exc}"}
-        start = max(1, start)
-        end = min(len(lines), end)
-        if start > end:
-            return {"error": f"Rango inválido {start}-{end} para {path}"}
-        return {
-            "path": path,
-            "start": start,
-            "end": end,
-            "content": "\n".join(lines[start - 1 : end]),
-        }
+        return read_indexed_lines(store, path, start, end)
 
     return [search_code, list_symbols, read_file_range]
