@@ -26,10 +26,14 @@ la anterior (commit + resumen).
 - [x] Tests de recuperación con repo de ejemplo pequeño (`test_retriever.py`,
   `test_context.py`); 36 tests verde, ruff + mypy limpios
 
-## Fase 3 — Agente con tools
-- [ ] Grafo LangGraph con las 3 tools (`search_code`, `list_symbols`, `read_file_range`)
-- [ ] Citas de origen verificables en la respuesta
-- [ ] Memoria de sesión + tests del flujo del agente
+## Fase 3 — Agente con tools ✅
+- [x] Grafo LangGraph con las 3 tools (`search_code`, `list_symbols`, `read_file_range`)
+  · `agent/tools.py` + `agent/graph.py` con `langchain.agents.create_agent` (API no
+  deprecada) y `ChatAnthropic` (`claude-sonnet-4-6`)
+- [x] Citas de origen verificables (`path:inicio-fin`) impuestas por el system prompt;
+  `read_file_range` lee líneas exactas vía `abs_path` indexado
+- [x] Memoria de sesión (`MemorySaver`, clave `thread_id`) + tests del flujo con chat
+  model guionizado (`ScriptedChatModel`); 43 tests verde, ruff + mypy limpios
 
 ## Fase 4 — API FastAPI
 - [ ] `POST /chat` con streaming (SSE)

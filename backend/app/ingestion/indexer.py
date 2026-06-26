@@ -40,9 +40,11 @@ def index_path(path: str | Path, *, embedder: Embedder, store: VectorStore) -> I
         language = detect_language(file_path)
         assert language is not None  # iter_source_files ya filtró extensiones desconocidas
         rel_path = file_path.relative_to(base_dir).as_posix()
+        abs_path = str(file_path.resolve())
         chunks = chunk_file(rel_path, source, language)
         files_indexed += 1
         for chunk in chunks:
+            chunk.abs_path = abs_path
             languages[chunk.language] = languages.get(chunk.language, 0) + 1
         all_chunks.extend(chunks)
 

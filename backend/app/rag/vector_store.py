@@ -7,7 +7,7 @@ explícitamente, por lo que la embedding function por defecto de Chroma nunca se
 
 from __future__ import annotations
 
-from typing import Protocol, cast
+from typing import Any, Protocol, cast
 
 from app.models.chunk import CodeChunk, RetrievedChunk
 
@@ -24,6 +24,10 @@ class VectorStore(Protocol):
 
     def query(self, embedding: list[float], top_k: int) -> list[RetrievedChunk]:
         """Devuelve los `top_k` chunks más similares al embedding de consulta."""
+        ...
+
+    def get_by_path(self, path: str) -> list[dict[str, Any]]:
+        """Devuelve los metadatos de todos los chunks indexados de una ruta."""
         ...
 
     def count(self) -> int:
@@ -58,6 +62,7 @@ class ChromaVectorStore:
                     "symbol_name": c.symbol_name or _NONE,
                     "kind": c.kind or _NONE,
                     "language": c.language,
+                    "abs_path": c.abs_path or _NONE,
                 }
                 for c in chunks
             ],
@@ -87,6 +92,10 @@ class ChromaVectorStore:
                 )
             )
         return results
+
+    def get_by_path(self, path: str) -> list[dict[str, Any]]:
+        res = self._collection.get(where={"path": path})
+        return cast("list[dict[str, Any]]", res.get("metadatas") or [])
 
     def count(self) -> int:
         return self._collection.count()

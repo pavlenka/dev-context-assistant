@@ -26,6 +26,10 @@ class CodeChunk(BaseModel):
     )
     language: str = Field(description="Lenguaje detectado por extensión.")
     content: str = Field(description="Texto del fragmento.")
+    abs_path: str | None = Field(
+        default=None,
+        description="Ruta absoluta en disco (la fija el indexer; permite leer líneas exactas).",
+    )
 
     @property
     def chunk_id(self) -> str:
