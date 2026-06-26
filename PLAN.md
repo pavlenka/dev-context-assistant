@@ -18,10 +18,13 @@ la anterior (commit + resumen).
 - [x] Endpoint `POST /ingest` (ruta de carpeta/fichero; multipart → Fase 5) + tests offline
   (28 tests verde, `FakeEmbedder` determinista; ruff + mypy limpios)
 
-## Fase 2 — Retrieval / RAG
-- [ ] Búsqueda semántica top-k + ensamblado de contexto con presupuesto de tokens
-- [ ] Interfaz `VectorStore` desacoplada (ChromaDB hoy, pgvector mañana)
-- [ ] Tests de recuperación con un repo de ejemplo pequeño
+## Fase 2 — Retrieval / RAG ✅
+- [x] Búsqueda semántica top-k (`rag/retriever.py`) + ensamblado de contexto con
+  presupuesto de tokens (`rag/context.py`, cabeceras citables `path:inicio-fin`)
+- [x] Interfaz `VectorStore` desacoplada (ChromaDB hoy, pgvector mañana) · ya cumplida en
+  Fase 1 (`rag/vector_store.py`)
+- [x] Tests de recuperación con repo de ejemplo pequeño (`test_retriever.py`,
+  `test_context.py`); 36 tests verde, ruff + mypy limpios
 
 ## Fase 3 — Agente con tools
 - [ ] Grafo LangGraph con las 3 tools (`search_code`, `list_symbols`, `read_file_range`)

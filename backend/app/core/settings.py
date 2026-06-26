@@ -45,6 +45,11 @@ class Settings(BaseSettings):
     chroma_persist_dir: str = "./.chroma"
     chroma_collection: str = "dev_context"
 
+    # Retrieval / RAG
+    retrieval_top_k: int = 8
+    context_token_budget: int = 4000
+    chars_per_token: float = 3.5
+
     def require_anthropic_key(self) -> str:
         """Devuelve la clave de Anthropic o falla nombrando la variable que falta."""
         if not self.anthropic_api_key:
