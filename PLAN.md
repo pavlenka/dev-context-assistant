@@ -35,10 +35,13 @@ la anterior (commit + resumen).
 - [x] Memoria de sesión (`MemorySaver`, clave `thread_id`) + tests del flujo con chat
   model guionizado (`ScriptedChatModel`); 43 tests verde, ruff + mypy limpios
 
-## Fase 4 — API FastAPI
-- [ ] `POST /chat` con streaming (SSE)
-- [ ] Manejo de errores y CORS para el frontend
-- [ ] Tests de integración de los endpoints
+## Fase 4 — API FastAPI ✅
+- [x] `POST /chat` con streaming SSE (`api/chat.py`): eventos `token`/`done`/`error`,
+  `done` con `session_id` + citas `path:inicio-fin` parseadas
+- [x] Manejo de errores (503 claro si falta clave, evento `error` en el stream) y CORS
+  (`CORSMiddleware`, orígenes configurables) · dependencias compartidas en `api/deps.py`
+- [x] Tests de integración de endpoints (`test_chat_endpoint.py` con agente guionizado);
+  47 tests verde, ruff + mypy limpios
 
 ## Fase 5 — Frontend React/TS
 - [ ] Drag & drop de ficheros → llamada a `/ingest`

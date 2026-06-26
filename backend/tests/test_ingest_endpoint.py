@@ -9,8 +9,8 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from app.api import ingest as ingest_api
-from app.api.ingest import get_embedder_dependency, get_store_dependency
+from app.api import deps as deps_api
+from app.api.deps import get_embedder_dependency, get_store_dependency
 from app.core.settings import MissingSettingError
 from app.main import app
 from app.rag.vector_store import ChromaVectorStore
@@ -54,7 +54,7 @@ def test_get_embedder_dependency_mapea_clave_faltante_a_503(
     def _raise() -> None:
         raise MissingSettingError("Falta VOYAGE_API_KEY")
 
-    monkeypatch.setattr(ingest_api, "get_embedder", _raise)
+    monkeypatch.setattr(deps_api, "get_embedder", _raise)
     with pytest.raises(HTTPException) as exc:
         get_embedder_dependency()
     assert exc.value.status_code == 503

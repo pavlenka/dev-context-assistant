@@ -50,6 +50,14 @@ class Settings(BaseSettings):
     context_token_budget: int = 4000
     chars_per_token: float = 3.5
 
+    # CORS (orígenes del frontend, separados por comas)
+    cors_origins: str = "http://localhost:5173"
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        """Lista de orígenes permitidos para CORS."""
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
     def require_anthropic_key(self) -> str:
         """Devuelve la clave de Anthropic o falla nombrando la variable que falta."""
         if not self.anthropic_api_key:
