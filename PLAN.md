@@ -53,8 +53,15 @@ la anterior (commit + resumen).
 - Backend: 49 tests verde, ruff + mypy limpios. Frontend: `npm run build` (tsc) + oxlint OK;
   render verificado con Preview.
 
-## Fase 6 — Polish y entrega
-- [ ] `Dockerfile` del backend + instrucciones de arranque
-- [ ] README con diagrama de arquitectura y pasos de demo
-- [ ] Dogfooding: indexar este repo + 3 preguntas de ejemplo en el README
-- [ ] (Opcional) GIF de la demo
+## Fase 6 — Polish y entrega ✅
+- [x] `Dockerfile` del backend (multi-stage uv) + `.dockerignore`; build OK y contenedor
+  sirve `/health` (`docker run -p 8000:8000 --env-file .env`)
+- [x] README con diagrama de arquitectura (mermaid), endpoints, `.env`, arranque y demo
+- [x] Dogfooding: indexar este repo (`backend/app` → 29 ficheros, 79 chunks) + 3 preguntas
+  de ejemplo en el README
+- [ ] (Opcional) GIF de la demo — requiere claves; pendiente
+
+---
+
+**Proyecto entregado.** Backend 49 tests verde, ruff + mypy limpios; frontend build + oxlint
+OK; imagen Docker funcional. La demo end-to-end y el GIF requieren claves reales en `.env`.
