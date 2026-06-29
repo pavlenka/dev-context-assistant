@@ -19,7 +19,6 @@ IGNORED_DIRS: frozenset[str] = frozenset(
         "build",
         "__pycache__",
         ".chroma",
-        ".uploads",
         ".pytest_cache",
         ".ruff_cache",
         ".mypy_cache",

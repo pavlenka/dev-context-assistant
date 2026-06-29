@@ -21,8 +21,9 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClie
     store = ChromaVectorStore(persist_dir=str(tmp_path / "chroma"), collection_name="test")
     app.dependency_overrides[get_embedder_dependency] = FakeEmbedder
     app.dependency_overrides[get_store_dependency] = lambda: store
+    # Usa el nombre real ".uploads" (con punto): regresión de que el loader no lo ignore.
     monkeypatch.setattr(
-        ingest_api, "get_settings", lambda: Settings(uploads_dir=str(tmp_path / "uploads"))
+        ingest_api, "get_settings", lambda: Settings(uploads_dir=str(tmp_path / ".uploads"))
     )
     yield TestClient(app)
     app.dependency_overrides.clear()
