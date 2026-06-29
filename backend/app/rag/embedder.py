@@ -1,8 +1,9 @@
 """Embeddings tras una interfaz `Embedder` para poder cambiar de proveedor.
 
-Voyage (`voyage-3`) es el proveedor por defecto; OpenAI es la alternativa configurable
-por `EMBEDDINGS_PROVIDER` en `.env`. Las claves se validan al construir el embedder, con
-un error claro que nombra la variable que falta (ver `core/settings.py`).
+Voyage (`voyage-3`) es el proveedor por defecto; OpenAI y Ollama (local, sin clave) son
+alternativas configurables por `EMBEDDINGS_PROVIDER` en `.env`. Las claves de los
+proveedores cloud se validan al construir el embedder, con un error claro que nombra la
+variable que falta (ver `core/settings.py`).
 """
 
 from __future__ import annotations
@@ -60,8 +61,14 @@ class OpenAIEmbedder:
 
 
 def get_embedder(settings: Settings | None = None) -> Embedder:
-    """Construye el embedder del proveedor activo, validando su clave de API."""
+    """Construye el embedder del proveedor activo (Ollama no requiere clave)."""
     settings = settings or get_settings()
+    if settings.embeddings_provider == "ollama":
+        from langchain_ollama import OllamaEmbeddings
+
+        return OllamaEmbeddings(
+            model=settings.ollama_embed_model, base_url=settings.ollama_base_url
+        )
     api_key = settings.require_embedding_key()
     if settings.embeddings_provider == "voyage":
         return VoyageEmbedder(api_key=api_key, model=settings.voyage_model)

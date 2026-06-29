@@ -30,16 +30,21 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # LLM (Anthropic)
+    # LLM
+    llm_provider: Literal["anthropic", "ollama"] = "anthropic"
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-sonnet-4-6"
+    # Ollama (LLM local; el modelo debe soportar tool calling, p. ej. gemma4).
+    ollama_model: str = "gemma4"
+    ollama_base_url: str = "http://localhost:11434"
 
     # Embeddings
-    embeddings_provider: Literal["voyage", "openai"] = "voyage"
+    embeddings_provider: Literal["voyage", "openai", "ollama"] = "voyage"
     voyage_api_key: str | None = None
     voyage_model: str = "voyage-3"
     openai_api_key: str | None = None
     openai_embedding_model: str = "text-embedding-3-small"
+    ollama_embed_model: str = "nomic-embed-text"
 
     # Vector store (ChromaDB local)
     chroma_persist_dir: str = "./.chroma"
