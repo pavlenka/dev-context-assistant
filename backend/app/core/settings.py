@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     chars_per_token: float = 3.5
 
     # CORS (orígenes del frontend, separados por comas)
-    cors_origins: str = "http://localhost:5173"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     @property
     def cors_origins_list(self) -> list[str]:

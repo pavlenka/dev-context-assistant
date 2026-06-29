@@ -1,6 +1,8 @@
 import type { Citation, IngestResponse, SourceFragment, UploadFile } from './types'
 
-const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8000'
+// 127.0.0.1 explícito (no "localhost"): en macOS "localhost" resuelve primero a ::1
+// (IPv6) y el backend escucha en IPv4, lo que provoca "Load failed" en Safari/WebKit.
+const BASE = import.meta.env.VITE_API_BASE ?? 'http://127.0.0.1:8000'
 
 async function errorText(resp: Response): Promise<string> {
   try {
