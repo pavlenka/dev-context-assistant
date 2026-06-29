@@ -1,6 +1,9 @@
 import type { Citation, IngestResponse, SourceFragment, UploadFile } from './types'
 
-const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8000'
+// Relativo por defecto: las peticiones van al mismo origen que el frontend y el proxy de
+// Vite las reenvía al backend (ver vite.config.ts). Evita CORS y los líos localhost↔::1.
+// En producción, define VITE_API_BASE con la URL del backend.
+const BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 async function errorText(resp: Response): Promise<string> {
   try {
@@ -11,13 +14,27 @@ async function errorText(resp: Response): Promise<string> {
   }
 }
 
-/** Sube ficheros (preservando su ruta relativa) y los indexa. */
+// Ficheros por petición. Lotes pequeños evitan el límite multipart del servidor y que
+// el navegador (Safari) aborte peticiones enormes ("Load failed").
+const UPLOAD_BATCH = 200
+
+/** Sube ficheros (preservando su ruta relativa) y los indexa, en lotes. */
 export async function ingestUpload(files: UploadFile[]): Promise<IngestResponse> {
-  const form = new FormData()
-  for (const { path, file } of files) form.append('files', file, path)
-  const resp = await fetch(`${BASE}/ingest/upload`, { method: 'POST', body: form })
-  if (!resp.ok) throw new Error(await errorText(resp))
-  return resp.json()
+  const total: IngestResponse = { files_indexed: 0, chunks_indexed: 0, skipped: 0, languages: {} }
+  for (let i = 0; i < files.length; i += UPLOAD_BATCH) {
+    const form = new FormData()
+    for (const { path, file } of files.slice(i, i + UPLOAD_BATCH)) form.append('files', file, path)
+    const resp = await fetch(`${BASE}/ingest/upload`, { method: 'POST', body: form })
+    if (!resp.ok) throw new Error(await errorText(resp))
+    const batch: IngestResponse = await resp.json()
+    total.files_indexed += batch.files_indexed
+    total.chunks_indexed += batch.chunks_indexed
+    total.skipped += batch.skipped
+    for (const [lang, n] of Object.entries(batch.languages)) {
+      total.languages[lang] = (total.languages[lang] ?? 0) + n
+    }
+  }
+  return total
 }
 
 /** Devuelve el fragmento exacto de un fichero indexado (panel de citas). */

@@ -7,12 +7,13 @@ from pathlib import Path
 
 from app.ingestion.languages import detect_language
 
-# Directorios que nunca se indexan (dependencias, artefactos, control de versiones).
+# Directorios que nunca se indexan (dependencias, artefactos, entornos, control de versiones).
 IGNORED_DIRS: frozenset[str] = frozenset(
     {
         "node_modules",
         ".venv",
         "venv",
+        "env",
         ".git",
         "dist",
         "build",
@@ -21,14 +22,31 @@ IGNORED_DIRS: frozenset[str] = frozenset(
         ".pytest_cache",
         ".ruff_cache",
         ".mypy_cache",
+        # Dependencias / entornos vendizados (no es código del usuario).
+        "site-packages",
+        ".tox",
+        ".nox",
+        ".eggs",
+        "vendor",
+        "target",
+        ".next",
+        ".gradle",
+        ".terraform",
     }
 )
+
+# Sufijos de directorio a saltar (nombres variables: paquetes, worktrees de git).
+IGNORED_DIR_SUFFIXES: tuple[str, ...] = (".egg-info", ".dist-info", ".worktrees")
+
+
+def _is_ignored_dir(name: str) -> bool:
+    return name in IGNORED_DIRS or name.endswith(IGNORED_DIR_SUFFIXES)
 
 
 def iter_source_files(root: str | Path) -> Iterator[Path]:
     """Itera ficheros con extensión reconocida bajo `root` (carpeta o fichero único).
 
-    Salta los directorios de `IGNORED_DIRS` y cualquier ruta con extensión desconocida.
+    Salta directorios de dependencias/entornos/artefactos y extensiones desconocidas.
     """
     root_path = Path(root)
     if root_path.is_file():
@@ -39,7 +57,7 @@ def iter_source_files(root: str | Path) -> Iterator[Path]:
     for path in sorted(root_path.rglob("*")):
         if not path.is_file():
             continue
-        if any(part in IGNORED_DIRS for part in path.parts):
+        if any(_is_ignored_dir(part) for part in path.parts):
             continue
         if detect_language(path) is None:
             continue

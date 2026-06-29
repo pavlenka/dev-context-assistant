@@ -21,6 +21,17 @@ def test_iter_source_files_filtra_dirs_y_extensiones(tmp_path: Path) -> None:
     assert found == {"a.py", "sub/b.js"}
 
 
+def test_iter_source_files_salta_deps_y_worktrees(tmp_path: Path) -> None:
+    (tmp_path / "mod.py").write_text("x = 1\n")
+    for ignored in ("site-packages", ".tox", "pkg.egg-info", "proj.worktrees"):
+        d = tmp_path / ignored
+        d.mkdir()
+        (d / "dep.py").write_text("y = 2\n")
+
+    found = {p.relative_to(tmp_path).as_posix() for p in iter_source_files(tmp_path)}
+    assert found == {"mod.py"}
+
+
 def test_iter_source_files_fichero_unico(tmp_path: Path) -> None:
     target = tmp_path / "solo.py"
     target.write_text("x = 1\n")

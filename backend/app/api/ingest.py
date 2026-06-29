@@ -6,7 +6,8 @@ from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request
+from starlette.datastructures import UploadFile
 
 from app.api.deps import get_embedder_dependency, get_store_dependency
 from app.core.settings import get_settings
@@ -16,6 +17,9 @@ from app.rag.embedder import Embedder
 from app.rag.vector_store import VectorStore
 
 router = APIRouter(tags=["ingest"])
+
+# Tope de ficheros por petición multipart (el frontend trocea en lotes menores).
+_MAX_UPLOAD_FILES = 10_000
 
 
 def _safe_relpath(filename: str) -> Path:
@@ -39,14 +43,17 @@ def ingest(
 
 @router.post("/ingest/upload", response_model=IngestResponse)
 async def ingest_upload(
-    files: Annotated[list[UploadFile], File()],
+    request: Request,
     embedder: Annotated[Embedder, Depends(get_embedder_dependency)],
     store: Annotated[VectorStore, Depends(get_store_dependency)],
 ) -> IngestResponse:
     """Guarda los ficheros subidos (preservando su ruta relativa) y los indexa.
 
-    Se conservan bajo `uploads_dir/<uuid>/` para poder leer fragmentos al citar.
+    Se parsea el form manualmente para elevar el límite por defecto de Starlette (1000
+    ficheros). Los ficheros se conservan bajo `uploads_dir/<uuid>/` para leer fragmentos.
     """
+    form = await request.form(max_files=_MAX_UPLOAD_FILES, max_fields=_MAX_UPLOAD_FILES)
+    files = [f for f in form.getlist("files") if isinstance(f, UploadFile)]
     if not files:
         raise HTTPException(status_code=400, detail="No se subió ningún fichero.")
     dest = Path(get_settings().uploads_dir) / uuid4().hex

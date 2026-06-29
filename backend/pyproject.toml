@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.138.1",
     "langchain>=1.3.11",
     "langchain-anthropic>=1.4.7",
+    "langchain-ollama>=1.1.0",
     "langgraph>=1.2.6",
     "openai>=2.44.0",
     "pydantic-settings>=2.14.2",

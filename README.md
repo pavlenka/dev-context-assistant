@@ -108,8 +108,10 @@ mensaje claro indicando cuál (p. ej. `Falta ANTHROPIC_API_KEY, requerida para e
 ```bash
 cd backend
 cp ../.env.example ../.env   # y rellena las claves
-uv run uvicorn app.main:app --reload
-# Salud: http://127.0.0.1:8000/health
+# --host localhost enlaza IPv4 e IPv6 (en macOS "localhost" resuelve a ::1 primero;
+# sin esto el navegador puede dar "Load failed" al hablar con el backend).
+uv run uvicorn app.main:app --reload --host localhost
+# Salud: http://localhost:8000/health
 ```
 
 ### Frontend
@@ -127,6 +129,30 @@ npm run dev      # http://localhost:5173
 docker build -t dev-context-assistant backend/
 docker run --rm -p 8000:8000 --env-file .env dev-context-assistant
 ```
+
+## Ejecutar 100% local con Ollama (Gemma)
+
+El proveedor de LLM y el de embeddings son configurables: con [Ollama](https://ollama.com)
+el proyecto corre **sin claves cloud**. El modelo de chat debe **soportar tool calling**
+(p. ej. `gemma4`), imprescindible para que el agente use sus herramientas.
+
+```bash
+ollama pull gemma4              # LLM del agente (con soporte de tools)
+ollama pull nomic-embed-text    # modelo de embeddings
+```
+
+En `.env`:
+```ini
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=gemma4
+EMBEDDINGS_PROVIDER=ollama
+OLLAMA_EMBED_MODEL=nomic-embed-text
+# OLLAMA_BASE_URL=http://localhost:11434
+```
+
+Arranca el backend como siempre (`uv run uvicorn app.main:app`). Las respuestas y las
+citas funcionan igual, pero generadas en local. Cualquier proveedor puede mezclarse
+(p. ej. LLM en Ollama y embeddings en Voyage).
 
 ## Demo (2 minutos)
 
