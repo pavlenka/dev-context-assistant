@@ -108,8 +108,10 @@ mensaje claro indicando cuál (p. ej. `Falta ANTHROPIC_API_KEY, requerida para e
 ```bash
 cd backend
 cp ../.env.example ../.env   # y rellena las claves
-uv run uvicorn app.main:app --reload
-# Salud: http://127.0.0.1:8000/health
+# --host localhost enlaza IPv4 e IPv6 (en macOS "localhost" resuelve a ::1 primero;
+# sin esto el navegador puede dar "Load failed" al hablar con el backend).
+uv run uvicorn app.main:app --reload --host localhost
+# Salud: http://localhost:8000/health
 ```
 
 ### Frontend
