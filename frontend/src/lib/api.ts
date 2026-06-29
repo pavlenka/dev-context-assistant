@@ -1,8 +1,9 @@
 import type { Citation, IngestResponse, SourceFragment, UploadFile } from './types'
 
-// 127.0.0.1 explícito (no "localhost"): en macOS "localhost" resuelve primero a ::1
-// (IPv6) y el backend escucha en IPv4, lo que provoca "Load failed" en Safari/WebKit.
-const BASE = import.meta.env.VITE_API_BASE ?? 'http://127.0.0.1:8000'
+// Relativo por defecto: las peticiones van al mismo origen que el frontend y el proxy de
+// Vite las reenvía al backend (ver vite.config.ts). Evita CORS y los líos localhost↔::1.
+// En producción, define VITE_API_BASE con la URL del backend.
+const BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 async function errorText(resp: Response): Promise<string> {
   try {
